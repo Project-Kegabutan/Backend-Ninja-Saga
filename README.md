@@ -11,7 +11,18 @@ mvn spring-boot:run
 mvn clean package
 java -jar target/backend-ninjasaga-rama-0.0.1-SNAPSHOT.jar
 ```
+AMF Endpoint
 Endpoint: `POST http://localhost:8080/amf/` with `Content-Type: application/x-amf`.
+
+For Registration Accounts :
+Endpoint: `POST http://localhost:8080/api/v1.0/ninjasaga/registration` with `Content-Type: application/json`
+{
+"username": "",
+"password": "",
+"email": ""
+}
+.
+
 ## Discord
 ```
 kenzoo6508

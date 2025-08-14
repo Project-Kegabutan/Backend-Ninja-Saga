@@ -1,6 +1,6 @@
 package co.id.beninjasaga.repository;
 
-import co.id.beninjasaga.model.entity.AccountEntity;
+import co.id.beninjasaga.model.entity.AccountsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface AccountsRepository extends JpaRepository<AccountEntity, Long> {
-    Optional<AccountEntity> findByUsername(String username);
+public interface AccountsRepository extends JpaRepository<AccountsEntity, Long> {
+    Optional<AccountsEntity> findByUsername(String username);
+    Optional<AccountsEntity> findByEmail(String email);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("UPDATE AccountEntity a SET a.accountSessionKey = :sessionKey, a.updatedAt = :updatedAt WHERE a.account_id = :accountId")
+    @Query("UPDATE AccountsEntity a SET a.accountSessionKey = :sessionKey, a.updatedAt = :updatedAt WHERE a.account_id = :accountId")
     int updateSessionKey(@Param("sessionKey") String sessionKey,
                          @Param("accountId") Long accountId,
                          @Param("updatedAt")LocalDateTime updatedAt);

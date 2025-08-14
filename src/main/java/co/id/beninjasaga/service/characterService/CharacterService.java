@@ -1,4 +1,4 @@
-package co.id.beninjasaga.service.character;
+package co.id.beninjasaga.service.characterService;
 
 import co.id.beninjasaga.model.dto.CharacterListDto;
 import co.id.beninjasaga.repository.AccountsRepository;

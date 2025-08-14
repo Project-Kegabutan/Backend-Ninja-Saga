@@ -1,6 +1,6 @@
 package co.id.beninjasaga.service;
 import co.id.beninjasaga.model.dto.LoginDto;
-import co.id.beninjasaga.model.entity.AccountEntity;
+import co.id.beninjasaga.model.entity.AccountsEntity;
 import co.id.beninjasaga.repository.AccountsRepository;
 import co.id.beninjasaga.util.HashUtil;
 import jakarta.transaction.Transactional;
@@ -25,7 +25,7 @@ public class SystemService {
         log.info("[AMF] Start Login - Username : {} | Password : {}",request.getUsername(), request.getPassword());
 
         Map<String,Object> m = new LinkedHashMap<>();
-        AccountEntity getAcc;
+        AccountsEntity getAcc;
         try {
             getAcc = accountsRepository.findByUsername(request.getUsername()).orElse(null);
             if (getAcc == null){
@@ -41,12 +41,13 @@ public class SystemService {
             // result array tanpa key: [25, 0, 100, <session>]
             String session = java.util.UUID.randomUUID().toString().replace("-", "");
             java.util.List<Object> result = new java.util.ArrayList<>();
-            result.add(getAcc.getAccount_id()); result.add(getAcc.getAccountType()); result.add(getAcc.getAccountBalance()); result.add(session);
+            result.add(getAcc.getAccount_id().intValue()); result.add(getAcc.getAccountType()); result.add(getAcc.getCharacterToken().getBalanceToken()); result.add(session);
 
             // signature sesuai HashUtil::getArrayHash (PHP)
             String signature = HashUtil.getArrayHash(result, session);
             int updateData = accountsRepository.updateSessionKey(session, getAcc.getAccount_id(), LocalDateTime.now());
             log.info("[AMF] Update Session Username {} Result : {}",request.getUsername(),updateData);
+            log.info("[AMF] Success Login ID {}",getAcc.getAccount_id());
             m.put("status", 1);
             m.put("result", result);
             m.put("signature", signature);

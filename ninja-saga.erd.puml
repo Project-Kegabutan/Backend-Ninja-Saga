@@ -1,0 +1,26 @@
+@startuml ninja saga
+
+
+entity accounts {
+    account_id : bigint(36) <<PK,INDEX>>
+    --
+    username : varchar(255) <<REQUIRED>>
+    password : varchar(255)  <<REQUIRED>>
+    email : varchar(255)  <<REQUIRED>>
+    account_type : Integer(10) <<REQUIRED>>
+    account_session_key :  varchar(255)
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity character_token {
+    id_token : bigint(255) <<PK,INDEX>>
+    --
+    username : varchar(255) <<REQUIRED>>
+    balance_token : varchar(255) <<INDEX>>
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+    account_id : int <<FK>>
+}
+
+@enduml
