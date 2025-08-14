@@ -61,7 +61,7 @@ application-*.secrets.yaml
 # IDEs
 # =========================
 # IntelliJ
-.idea/
+*.idea/
 *.iml
 *.ipr
 *.iws
