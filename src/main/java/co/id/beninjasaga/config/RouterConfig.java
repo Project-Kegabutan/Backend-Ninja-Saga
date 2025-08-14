@@ -1,6 +1,7 @@
 package co.id.beninjasaga.config;
 
 import co.id.beninjasaga.model.dto.CharacterListDto;
+import co.id.beninjasaga.model.dto.CreateCharacterDto;
 import co.id.beninjasaga.model.dto.LoginDto;
 import co.id.beninjasaga.service.amfService.characterService.CharacterService;
 import co.id.beninjasaga.util.router.ServiceRouter;
@@ -36,6 +37,13 @@ public class RouterConfig {
                         new MethodSig(
                                 new Class<?>[]{ CharacterListDto.Request.class },
                                 new String[][]{ new String[]{ "sessionKey"} }
+                        )
+                )
+                .registerSignature(
+                        "CharacterDAO.createCharacter",
+                        new MethodSig(
+                                new Class<?>[]{ CreateCharacterDto.Request.class },
+                                new String[][]{ new String[]{ "sessionKey", "characterName", "characterGender", "characterHairColor", "characterSkinColor", "characterHair", "characterFace"} }
                         )
                 );
     }
