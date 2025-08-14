@@ -1,4 +1,4 @@
-package co.id.beninjasaga.service.characterService;
+package co.id.beninjasaga.service.amfService.characterService;
 
 import co.id.beninjasaga.model.dto.CharacterListDto;
 import co.id.beninjasaga.model.entity.AccountsEntity;

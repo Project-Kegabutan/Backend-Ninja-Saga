@@ -1,4 +1,4 @@
-package co.id.beninjasaga.service;
+package co.id.beninjasaga.service.amfService;
 import co.id.beninjasaga.model.dto.LoginDto;
 import co.id.beninjasaga.model.entity.AccountsEntity;
 import co.id.beninjasaga.repository.AccountsRepository;

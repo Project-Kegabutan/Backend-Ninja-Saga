@@ -2,9 +2,9 @@ package co.id.beninjasaga.config;
 
 import co.id.beninjasaga.model.dto.CharacterListDto;
 import co.id.beninjasaga.model.dto.LoginDto;
-import co.id.beninjasaga.service.characterService.CharacterService;
+import co.id.beninjasaga.service.amfService.characterService.CharacterService;
 import co.id.beninjasaga.util.router.ServiceRouter;
-import co.id.beninjasaga.service.SystemService;
+import co.id.beninjasaga.service.amfService.SystemService;
 import co.id.beninjasaga.amf.AmfBinders.MethodSig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
