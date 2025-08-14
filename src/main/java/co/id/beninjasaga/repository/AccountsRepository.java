@@ -12,10 +12,24 @@ import java.util.Optional;
 
 @Repository
 public interface AccountsRepository extends JpaRepository<AccountsEntity, Long> {
+
+    Optional<AccountsEntity> findByAccountSessionKey(String sessionKey);
+
     Optional<AccountsEntity> findByUsername(String username);
+
     Optional<AccountsEntity> findByEmail(String email);
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("UPDATE AccountsEntity a SET a.accountSessionKey = :sessionKey, a.updatedAt = :updatedAt WHERE a.account_id = :accountId")
+    @Query("UPDATE AccountsEntity a " +
+            "SET a.loginPerDay = COALESCE(a.loginPerDay, 0) + 1 " +
+            "WHERE a.accountId = :accountId")
+    int incrementLoginPerDay(@Param("accountId") Long accountId);
+
+    @Query("SELECT a.loginPerDay FROM AccountsEntity a WHERE a.accountId = :accountId")
+    Integer getLoginPerDay(@Param("accountId") Long accountId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE AccountsEntity a SET a.accountSessionKey = :sessionKey, a.updatedAt = :updatedAt WHERE a.accountId = :accountId")
     int updateSessionKey(@Param("sessionKey") String sessionKey,
                          @Param("accountId") Long accountId,
                          @Param("updatedAt")LocalDateTime updatedAt);

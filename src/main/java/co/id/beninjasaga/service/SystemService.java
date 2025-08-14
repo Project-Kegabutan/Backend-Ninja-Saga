@@ -41,13 +41,13 @@ public class SystemService {
             // result array tanpa key: [25, 0, 100, <session>]
             String session = java.util.UUID.randomUUID().toString().replace("-", "");
             java.util.List<Object> result = new java.util.ArrayList<>();
-            result.add(getAcc.getAccount_id().intValue()); result.add(getAcc.getAccountType()); result.add(getAcc.getCharacterToken().getBalanceToken()); result.add(session);
+            result.add(getAcc.getAccountId().intValue()); result.add(getAcc.getAccountType()); result.add(getAcc.getCharacterToken().getBalanceToken()); result.add(session);
 
             // signature sesuai HashUtil::getArrayHash (PHP)
             String signature = HashUtil.getArrayHash(result, session);
-            int updateData = accountsRepository.updateSessionKey(session, getAcc.getAccount_id(), LocalDateTime.now());
+            int updateData = accountsRepository.updateSessionKey(session, getAcc.getAccountId(), LocalDateTime.now());
             log.info("[AMF] Update Session Username {} Result : {}",request.getUsername(),updateData);
-            log.info("[AMF] Success Login ID {}",getAcc.getAccount_id());
+            log.info("[AMF] Success Login ID {}",getAcc.getAccountId());
             m.put("status", 1);
             m.put("result", result);
             m.put("signature", signature);

@@ -14,7 +14,7 @@ public class CharacterListDto {
     @Data
     public static class Response{
         private String status;
-        List<Object[]> result;
+        List<List<Object>> result;
         private String login_per_day;
     }
 }

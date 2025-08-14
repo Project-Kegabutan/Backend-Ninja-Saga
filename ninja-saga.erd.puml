@@ -23,4 +23,135 @@ entity character_token {
     account_id : int <<FK>>
 }
 
+entity character_list {
+    character_id : bigint(255) <<PK, INDEX>>
+    --
+    character_name : varchar(255)
+    character_level : int(10)
+    character_gender : int(10)
+    character_exp : varchar(255)
+    character_gold : int(20)
+    character_hp : int(20)
+    character_max_hp : int(20)
+    character_cp : int(20)
+    character_max_cp : int(20)
+    character_skill_type : varchar(255)
+    account_id : int <<FK>>
+}
+
+entity bloodline{
+    bloodline_id : bigint(255) <<PK, INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+
+entity character_bloodline{
+    character_bloodline_id : bigint(255) <<PK, INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+
+entity character_body_style{
+    character_body_style_id : bigint(255) <<PK, INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_element_point{
+    character_element_id : bigint(255) <<PK, INDEX>>
+    --
+    character_skill_ap : int
+    character_element_fire : int
+    character_element_water : int
+    character_element_wind : int
+    character_element_earth : int
+    character_element_lightning : int
+
+    character_id : bigint <<FK>>
+}
+
+entity character_equipped_skills{
+    character_equipped_skill_id : bigint(255) <<PK, INDEX>>
+    --
+    character_skill_number : varchar(255)
+    character_id : bigint <<FK>>
+}
+
+entity character_equipped_body_set{
+    character_equipped_body_set_id : bigint(255) <<PK, INDEX>>
+    --
+    character_equipped_body_set_number : varchar(255)
+    character_id : bigint <<FK>>
+}
+
+entity character_equipped_weapon{
+    character_equipped_weapon_id : bigint(255) <<PK, INDEX>>
+    --
+    character_weapon_number : varchar(255)
+    character_id : bigint <<FK>>
+}
+
+entity character_equipped_back_item{
+    character_equipped_back_item_id : bigint(255) <<PK, INDEX>>
+    --
+    character_equipped_back_item_number : varchar(255)
+    character_id : bigint <<FK>>
+}
+
+entity character_equipped_accessory{
+    character_equipped_accessory_id : bigint(255) <<PK, INDEX>>
+    --
+    character_equipped_accessory_number : varchar(255)
+    character_id : bigint <<FK>>
+}
+
+entity character_inv_hair{
+    character_inv_hair : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_inv_slots{
+    character_inv_slots_id : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_item{
+    character_item_id : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_material{
+    character_material_id : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_mission{
+    character_mission_id : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_ninja_essence{
+    character_ninja_essence_id : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_pet{
+    character_pet_id : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
+
+entity character_pet_skills{
+    character_pet_skills_id : bigint(255) <<PK,INDEX>>
+    --
+    character_id : bigint <<FK>>
+}
 @enduml
