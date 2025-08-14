@@ -1,0 +1,99 @@
+# =========================
+# OS (macOS & Windows)
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# =========================
+# Java / JVM
+# =========================
+*.class
+*.log
+*.ctxt
+*.hprof
+hs_err_pid*
+replay_pid*
+
+# =========================
+# Maven
+# =========================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# =========================
+# Gradle
+# =========================
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+gradle-app.properties
+
+# =========================
+# Spring Boot / Konfigurasi
+# =========================
+# (Hati-hati: kalau kamu memang commit application.yml, hapus baris ignore di bawah)
+application-*.local.yml
+application-*.local.yaml
+application-local.yml
+application-local.yaml
+application-*.secrets.yml
+application-*.secrets.yaml
+*.env
+.env
+.env.*
+*.pid
+
+# =========================
+# IDEs
+# =========================
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+nbproject/
+dist/
+nbdist/
+.nb-gradle/
+
+# =========================
+# Laporan & Coverage
+# =========================
+coverage/
+jacoco.exec
+*.lcov
+.site/
+site/
+
+# =========================
+# Cache / Temp
+# =========================
+.tmp/
+temp/
+tmp/
+.cache/
