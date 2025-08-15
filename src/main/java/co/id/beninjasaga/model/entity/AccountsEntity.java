@@ -1,10 +1,14 @@
 package co.id.beninjasaga.model.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+@Getter
+@Setter
 @Entity
 
 @Table(name = "accounts",
@@ -50,7 +54,8 @@ public class AccountsEntity {
 
     // 1 Account -> many Characters
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE) // opsional, tetap sarankan FK DB
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    // opsional, tetap sarankan FK DB
     private List<CharacterListEntity> characters = new ArrayList<>();
 
     // helper methods
@@ -63,33 +68,4 @@ public class AccountsEntity {
         characters.remove(c);
         c.setAccount(null);
     }
-
-    // getters & setters
-    public Long getAccountId() { return accountId; }
-    public void setAccountId(Long accountId) { this.accountId = accountId; }
-
-    public Integer getLoginPerDay() { return loginPerDay; }
-    public void setLoginPerDay(Integer loginPerDay) { this.loginPerDay = loginPerDay; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public Integer getAccountType() { return accountType; }
-    public void setAccountType(Integer accountType) { this.accountType = accountType; }
-    public String getAccountSessionKey() { return accountSessionKey; }
-    public void setAccountSessionKey(String accountSessionKey) { this.accountSessionKey = accountSessionKey; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-    public AccountsCharacterTokenEntity getCharacterToken() { return characterToken; }
-    public void setCharacterToken(AccountsCharacterTokenEntity characterToken) {
-        this.characterToken = characterToken;
-        if (characterToken != null) characterToken.setAccount(this);
-    }
-    public List<CharacterListEntity> getCharacters() { return characters; }
-    public void setCharacters(List<CharacterListEntity> characters) { this.characters = characters; }
 }
