@@ -3,11 +3,14 @@ package co.id.beninjasaga.service.amfService.characterService;
 import co.id.beninjasaga.model.dto.CharacterListDto;
 import co.id.beninjasaga.model.dto.CreateCharacterDto;
 import co.id.beninjasaga.model.dto.DeleteCharacterDto;
+import co.id.beninjasaga.model.dto.GetExtraDataDto;
 import co.id.beninjasaga.model.entity.*;
 import co.id.beninjasaga.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -207,6 +210,40 @@ public class CharacterService {
             "character_pet"
     );
 
+    public Map<String, Object>  getExtraData(GetExtraDataDto.Request request) throws Exception{
+        log.info("[AMF] Start Get Extra Data - Session Key : {}", request.getSessionKey());
+        log.info("[AMF] Start Create Character - character GetHashXP : {}", request.getHashXP());
+        Map<String, Object> response = new LinkedHashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+
+        GetExtraDataDto.result setResult = new GetExtraDataDto.result();
+
+        GetExtraDataDto.Response setResponse = new GetExtraDataDto.Response();
+        try {
+            var optAcc = accountsRepository.findByAccountSessionKey(request.getSessionKey());
+            if (optAcc.isEmpty()) {
+                response.put("status", 0);
+                response.put("error", "Invalid session key");
+                return response;
+            }
+            var getDataAccount = characterListRepository.findNewCreatingCharacter(optAcc.get().getAccountId());
+            if (getDataAccount.isEmpty()) { /* handle not found */ }
+            Map<String,Object> row = getDataAccount.get();
+            JSONObject newInfoCharacter = new JSONObject(row);
+            setResult.characterId = newInfoCharacter.getInt("character_id");
+            setResult.characterName = newInfoCharacter.getString("character_name");
+            setResult.characterLevel = newInfoCharacter.getInt("character_level");
+            log.info("newInfoCharacter {}",newInfoCharacter.toString());
+
+            setResponse.setStatus(1);
+            setResponse.setResult(setResult);
+            response.put("status", setResponse.getStatus());
+            response.put("character", mapper.convertValue(setResponse.getResult(), new com.fasterxml.jackson.core.type.TypeReference<Map<String,Object>>(){}));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
+    }
     @Transactional
     public Map<String, Object> deleteCharacter(DeleteCharacterDto.Request request) {
         log.info("[AMF] Start Delete Character - Session Key : {}", request.getSessionKey());

@@ -56,6 +56,14 @@ public class RouterConfig {
                 )
 
                 .registerSignature(
+                        "CharacterDAO.getExtraData",
+                        new MethodSig(
+                                new Class<?>[]{ GetExtraDataDto.Request.class },
+                                new String[][]{ new String[]{ "sessionKey", "hashXP"} }
+                        )
+                )
+
+                .registerSignature(
                         "CharacterDAO.deleteCharacter",
                         new MethodSig(
                                 new Class<?>[]{ DeleteCharacterDto.Request.class },
