@@ -56,6 +56,7 @@ entity character_bloodline{
 entity character_body_style{
     character_body_style_id : bigint(255) <<PK, INDEX>>
     --
+
     character_id : bigint <<FK>>
 }
 

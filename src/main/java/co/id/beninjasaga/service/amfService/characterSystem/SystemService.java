@@ -1,4 +1,4 @@
-package co.id.beninjasaga.service.amfService;
+package co.id.beninjasaga.service.amfService.characterSystem;
 import co.id.beninjasaga.model.dto.LoginDto;
 import co.id.beninjasaga.model.entity.AccountsEntity;
 import co.id.beninjasaga.repository.AccountsRepository;
@@ -48,9 +48,15 @@ public class SystemService {
             int updateData = accountsRepository.updateSessionKey(session, getAcc.getAccountId(), LocalDateTime.now());
             log.info("[AMF] Update Session Username {} Result : {}",request.getUsername(),updateData);
             log.info("[AMF] Success Login ID {}",getAcc.getAccountId());
+            Map<String, Object> mapVersionsSwf = new LinkedHashMap<>();
+            List<Object> versionSwf = new ArrayList<>();
+            mapVersionsSwf.put("type", "swf");
+            mapVersionsSwf.put("version", "3.3.00810");
+            versionSwf.add(mapVersionsSwf);
             m.put("status", 1);
             m.put("result", result);
             m.put("signature", signature);
+            m.put("swf_versions", versionSwf);
             return m;
         }catch (Exception e){
             m.put("status", 0);

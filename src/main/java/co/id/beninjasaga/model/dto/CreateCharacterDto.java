@@ -10,7 +10,7 @@ public class CreateCharacterDto {
     public static class Request {
         private String sessionKey;
         private String characterName;
-        private int characterGender;
+        private String characterGender;
         // dari client: "01_0" dll
         private String characterHairColor;
         private String characterSkinColor;

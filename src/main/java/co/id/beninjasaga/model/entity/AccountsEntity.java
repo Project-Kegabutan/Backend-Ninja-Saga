@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+
 @Table(name = "accounts",
         indexes = {
                 @Index(name = "idx_accounts_username", columnList = "username"),
@@ -49,6 +50,7 @@ public class AccountsEntity {
 
     // 1 Account -> many Characters
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE) // opsional, tetap sarankan FK DB
     private List<CharacterListEntity> characters = new ArrayList<>();
 
     // helper methods
