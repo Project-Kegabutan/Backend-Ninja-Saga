@@ -19,6 +19,8 @@ public class RouterConfig {
                 .register("SystemService", systemService)
                 .register("CharacterDAO", characterDAO)
                 .register("SystemData", systemData)
+                .register("CharacterService", characterDAO)
+                .register("CharacterValidation", characterDAO)
 
                 // SystemService.login(LoginDto.Request)
                 // payload list: ["username","password","buildNo","buildReview"]
@@ -60,6 +62,22 @@ public class RouterConfig {
                         new MethodSig(
                                 new Class<?>[]{ GetExtraDataDto.Request.class },
                                 new String[][]{ new String[]{ "sessionKey", "hashXP"} }
+                        )
+                )
+
+                .registerSignature(
+                        "CharacterService.selectFreeSkill",
+                        new MethodSig(
+                                new Class<?>[]{ SelectFreeSkillDto.Request.class },
+                                new String[][]{ new String[]{ "sessionKey", "skillNumber"} }
+                        )
+                )
+
+                .registerSignature(
+                        "CharacterValidation.validateSkill",
+                        new MethodSig(
+                                new Class<?>[]{ ValidateSkillCharacter.Request.class },
+                                new String[][]{ new String[]{ "sessionKey", "hash", "skillNo"} }
                         )
                 )
 

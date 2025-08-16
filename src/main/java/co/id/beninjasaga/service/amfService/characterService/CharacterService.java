@@ -1,9 +1,6 @@
 package co.id.beninjasaga.service.amfService.characterService;
 
-import co.id.beninjasaga.model.dto.CharacterListDto;
-import co.id.beninjasaga.model.dto.CreateCharacterDto;
-import co.id.beninjasaga.model.dto.DeleteCharacterDto;
-import co.id.beninjasaga.model.dto.GetExtraDataDto;
+import co.id.beninjasaga.model.dto.*;
 import co.id.beninjasaga.model.entity.*;
 import co.id.beninjasaga.repository.*;
 import co.id.beninjasaga.util.HashUtil;
@@ -20,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -397,6 +396,83 @@ public class CharacterService {
         } finally {
             log.info("[AMF] End Delete Character - Session Key : {}", request.getSessionKey());
         }
+    }
+
+    public Map<String, Object> selectFreeSkill(SelectFreeSkillDto.Request request)throws Exception{
+        log.info("[AMF] Start Select Free Skill - Session Key : {}", request.getSessionKey());
+
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        try {
+            var optAcc = accountsRepository.findByAccountSessionKey(request.getSessionKey());
+            if (optAcc.isEmpty()) {
+                response.put("status", 0);
+                response.put("error", "Invalid session key");
+                return response;
+            }
+
+            var getNewCharacter = characterListRepository.findNewCreatingCharacter(optAcc.get().getAccountId());
+            if (getNewCharacter.isEmpty()) { /* handle not found */ }
+            Map<String,Object> rowGetDataCharacter = getNewCharacter.get();
+            JSONObject dataInfoCharacter = new JSONObject(rowGetDataCharacter);
+
+            Long characterId = dataInfoCharacter.getLong("character_id");
+            Matcher m = Pattern.compile("(\\d+)").matcher(request.getSkillNumber());
+            String SkillNumber = m.find() ? String.valueOf(m.group(1)) : null; // 12
+            characterEquippedSkillsRepository.updateNewSkillCharacter(characterId, SkillNumber);
+            response.put("status", 1);
+        }catch (Exception e){
+
+            e.printStackTrace();
+            response.put("status",0);
+        }
+        return response;
+    }
+
+    public Map<String, Object> validateSkill(ValidateSkillCharacter.Request request){
+        log.info("[AMF] Start validateSkill - Session Key : {}", request.getSessionKey());
+        log.info("[AMF] Start validateSkill - getHash : {}", request.getHash());
+
+        log.info("[AMF] Start validateSkill - getSkillNo : {}", request.getSkillNo());
+
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        try {
+            var optAcc = accountsRepository.findByAccountSessionKey(request.getSessionKey());
+            if (optAcc.isEmpty()) {
+                response.put("status", 0);
+                response.put("error", "Invalid session key");
+                return response;
+            }
+
+            var getNewCharacter = characterListRepository.findNewCreatingCharacter(optAcc.get().getAccountId());
+            if (getNewCharacter.isEmpty()) { /* handle not found */ }
+            Map<String, Object> rowGetDataCharacter = getNewCharacter.get();
+            JSONObject dataInfoCharacter = new JSONObject(rowGetDataCharacter);
+
+            Long characterId = dataInfoCharacter.getLong("character_id");
+            Matcher m = Pattern.compile("(?i)skill(\\d+)").matcher(String.valueOf(request.getSkillNo()));
+            String SkillNumberRequest = m.find() ? m.group(1) : null;  // "1"
+            log.info("Skill Request : {}", SkillNumberRequest);
+
+            CharacterEquippedSkillsEntity getSkillNumberDB = characterEquippedSkillsRepository.findByCharacter_CharacterId(characterId);
+            log.info("Skill Database : {}",getSkillNumberDB.getCharacterSkillNumber());
+            log.info("!getSkillNumberDB.getCharacterSkillNumber().equals(SkillNumberRequest : {}",!getSkillNumberDB.getCharacterSkillNumber().equals(SkillNumberRequest));
+            log.info("getSkillNumberDB.getCharacterSkillNumber().equals(SkillNumberRequest : {}",getSkillNumberDB.getCharacterSkillNumber().equals(SkillNumberRequest));
+            if (!getSkillNumberDB.getCharacterSkillNumber().equals(SkillNumberRequest)) {
+                response.put("status", 0);
+                response.put("error", "Skill Error");
+                return response;
+            }
+            response.put("status",1);
+            response.put("equipped_skill",getSkillNumberDB.getCharacterSkillNumber());
+            String hashSkill = "CharacterValidation.validateSkill" +getSkillNumberDB.getCharacterSkillNumber().toString() + 1;
+            String resultHash = HashUtil.getHash(hashSkill, request.getSessionKey());
+            response.put("signature", resultHash);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
     }
 
     private static Integer nvl(Integer v, Integer def) {
