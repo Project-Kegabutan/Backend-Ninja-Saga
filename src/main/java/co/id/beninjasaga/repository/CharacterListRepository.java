@@ -31,7 +31,8 @@ public interface CharacterListRepository extends JpaRepository<CharacterListEnti
                                            character_id,
                                            character_name,
                                            character_level,
-                                           CAST(character_gender AS CHAR) AS gender_str
+                                           CAST(character_gender AS CHAR) AS gender_str,
+                                           created_at
                                          FROM character_list
                                          WHERE account_id = :accountId
                                          ORDER BY created_at DESC, character_id DESC

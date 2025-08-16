@@ -6,6 +6,7 @@ import co.id.beninjasaga.model.dto.DeleteCharacterDto;
 import co.id.beninjasaga.model.dto.GetExtraDataDto;
 import co.id.beninjasaga.model.entity.*;
 import co.id.beninjasaga.repository.*;
+import co.id.beninjasaga.util.HashUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.*;
 
 @Slf4j
@@ -217,9 +221,11 @@ public class CharacterService {
         ObjectMapper mapper = new ObjectMapper();
 
         GetExtraDataDto.result setResult = new GetExtraDataDto.result();
-
+        GetExtraDataDto.pvpRecord pvpRecord = new GetExtraDataDto.pvpRecord();
+        GetExtraDataDto.trainingSkill trainingSkill = new GetExtraDataDto.trainingSkill();
         GetExtraDataDto.Response setResponse = new GetExtraDataDto.Response();
         try {
+            DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             var optAcc = accountsRepository.findByAccountSessionKey(request.getSessionKey());
             if (optAcc.isEmpty()) {
                 response.put("status", 0);
@@ -228,17 +234,100 @@ public class CharacterService {
             }
             var getDataAccount = characterListRepository.findNewCreatingCharacter(optAcc.get().getAccountId());
             if (getDataAccount.isEmpty()) { /* handle not found */ }
-            Map<String,Object> row = getDataAccount.get();
-            JSONObject newInfoCharacter = new JSONObject(row);
+            Map<String,Object> rowGetDataCharacter = getDataAccount.get();
+            JSONObject newInfoCharacter = new JSONObject(rowGetDataCharacter);
+
             setResult.characterId = newInfoCharacter.getInt("character_id");
             setResult.characterName = newInfoCharacter.getString("character_name");
             setResult.characterLevel = newInfoCharacter.getInt("character_level");
-            log.info("newInfoCharacter {}",newInfoCharacter.toString());
+
+            //Body Style
+            var getDataBodyStyle = characterBodyStyleRepository.getCharacterBodyStyle(newInfoCharacter.getLong("character_id"));
+            if (getDataBodyStyle.isEmpty()) { /* handle not found */ }
+            Map<String,Object> rowDataBodyStyle = getDataBodyStyle.get();
+            JSONObject bodyDataStyle = new JSONObject(rowDataBodyStyle);
+
+            setResult.characterHair = bodyDataStyle.get("character_hair_style");
+            setResult.characterSkills = new ArrayList<>();
+            setResult.characterBodyParts = new ArrayList<>();
+            //--------------------//
+            //Equipment Eq
+            var getEquipWeap = characterEquippedWeaponRepository.getEquipmentWeapById(newInfoCharacter.getLong("character_id"));
+            if (getEquipWeap.isEmpty()) { /* handle not found */ }
+            Map<String,Object> rowGetEquipWeap = getEquipWeap.get();
+            JSONObject equipWeap = new JSONObject(rowGetEquipWeap);
+
+            setResult.characterEquippedWeapon = equipWeap.getString("character_weapon_number");
+            //--------------------//
+            setResult.charLoginPerDay = 0;
+            //Set Pvp
+            pvpRecord.play = 0;
+            pvpRecord.win =0;
+            pvpRecord.lose=0;
+            pvpRecord.disconnect=0;
+            pvpRecord.avgLevelDiff=0;
+            pvpRecord.pvpCurrency=0;
+            pvpRecord.pvpPoint=0;
+            pvpRecord.pvpTournamentTicket=0;
+
+            setResult.pvpRecord = pvpRecord;
+            //--------------------//
+
+
+            setResult.pvpSchedule = new ArrayList<>();
+            setResult.seasonNumber = 1;
+            setResult.training_skill = trainingSkill;
+            trainingSkill.setId(null);
+            trainingSkill.setTime(null);
+            setResult.petId = null;
+            setResult.playerPet = new ArrayList<>();
+            setResult.bpMissionId = new ArrayList<>();
+            setResult.newMail = false;
+
+            String raw = newInfoCharacter.getString("created_at"); // "2025-08-16 10:51:27.525977"
+            LocalDateTime ldt = LocalDateTime.parse(raw, INCOMING);
+            setResult.characterCreateDate = ldt.format(OUTGOING);   // "20
+
+            setResult.getHuntingPassport = true;
+
+            //Clan
+            setResult.clanId = null;
+            setResult.seDayCountOpen = 0;
+            setResult.seEndDate = 0;
+            setResult.seEndDateNotice = 0;
+            setResult.pvpInvite = false;
+            setResult.sjeEndDate = 0;
+            setResult.sjeEndDateNotice =0;
+            setResult.newsArr = new ArrayList<>();
+            setResult.newsId = new ArrayList<>();
+            setResult.isGraphic = false;
+            setResult.prestige = 0;
+            setResult.senjutsuSystem = new ArrayList<>();
+            setResult.bloodline = new ArrayList<>();
+            setResult.senjutsu = new ArrayList<>();
+
+            String pvpStr =  setResult.getPvpRecord().play +","+  setResult.getPvpRecord().win +","+  setResult.getPvpRecord().lose +","+  setResult.getPvpRecord().disconnect +","+  setResult.getPvpRecord().getAvgLevelDiff();
+            log.info("PVPStr : {}",pvpStr);
+            String trainingSkillId = String.valueOf(trainingSkill.getId());
+            String trainingSkillTime = String.valueOf(trainingSkill.getTime());
+
+            String trainingSkillStr = trainingSkillId +"," + trainingSkillTime;
+            log.info("trainingSkillStr : {}",trainingSkillStr);
+
+
+            String petsStr = setResult.getPlayerPet().toString();
+            if (petsStr == null || petsStr.trim().equals("[]")) petsStr = "";
+            log.info("petsStr : {}",petsStr);
+            String dataPreHashCharacter = pvpStr+","+trainingSkillStr +","+ petsStr;
+
+            String extraData = HashUtil.getHash(dataPreHashCharacter, request.sessionKey);
+            setResult.extraDataHash = extraData;
+
 
             setResponse.setStatus(1);
             setResponse.setResult(setResult);
             response.put("status", setResponse.getStatus());
-            response.put("character", mapper.convertValue(setResponse.getResult(), new com.fasterxml.jackson.core.type.TypeReference<Map<String,Object>>(){}));
+            response.put("result", mapper.convertValue(setResponse.getResult(), new com.fasterxml.jackson.core.type.TypeReference<Map<String,Object>>(){}));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -352,4 +441,15 @@ public class CharacterService {
             }
         }
     }
+    private static final DateTimeFormatter INCOMING =
+            new DateTimeFormatterBuilder()
+                    .appendPattern("yyyy-MM-dd HH:mm:ss")
+                    .optionalStart()
+                    .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true) // .S .. sampai 9 digit
+                    .optionalEnd()
+                    .toFormatter();
+
+    private static final DateTimeFormatter OUTGOING =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 }
